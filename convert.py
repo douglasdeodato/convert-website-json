@@ -2,34 +2,34 @@ import requests
 import json
 from bs4 import BeautifulSoup
 
-# Carrega a URL do arquivo JSON
-with open('config.json', 'r') as arquivo:
-    dados_json = json.load(arquivo)
+# Load the URL from the JSON file
+with open('config.json', 'r') as file:
+    json_data = json.load(file)
 
-# Obtém a URL do JSON carregado
-url = dados_json['site_url']
+# Get the URL from the loaded JSON
+url = json_data['site_url']
 
-# Faz uma solicitação HTTP para obter o conteúdo HTML do site
+# Make an HTTP request to retrieve the HTML content of the website
 response = requests.get(url)
 
-# Verifica se a solicitação foi bem-sucedida
+# Check if the request was successful
 if response.status_code == 200:
-    # Analisa o conteúdo HTML usando BeautifulSoup
+    # Parse the HTML content using BeautifulSoup
     soup = BeautifulSoup(response.content, 'html.parser')
 
-    # Cria um dicionário vazio para armazenar os dados
-    dados = {}
+    # Create an empty dictionary to store the data
+    data = {}
 
-    # Extrai o título do site
-    dados['titulo'] = soup.title.string
+    # Extract the website title
+    data['title'] = soup.title.string
 
-    # Extrai os parágrafos do site
-    dados['paragrafos'] = [p.get_text() for p in soup.find_all('p')]
+    # Extract the paragraphs from the website
+    data['paragraphs'] = [p.get_text() for p in soup.find_all('p')]
 
-    # Salva os dados em um arquivo JSON
-    with open('dados.json', 'w') as arquivo_saida:
-        json.dump(dados, arquivo_saida)
+    # Save the data to a JSON file with formatting
+    with open('data.json', 'w') as outfile:
+        json.dump(data, outfile, indent=4)
 
-    print("Dados salvos em dados.json com sucesso!")
+    print("Data saved to data.json successfully!")
 else:
-    print("Ocorreu um erro ao fazer a solicitação HTTP. Código de status:", response.status_code)
+    print("An error occurred while making the HTTP request. Status code:", response.status_code)
