@@ -2,12 +2,12 @@ import requests
 import json
 from bs4 import BeautifulSoup
 
-# Load the URL from the JSON file
+# Load the URL and base URL from the JSON file
 with open('config.json', 'r') as file:
     json_data = json.load(file)
 
-# Get the URL from the loaded JSON
 url = json_data['site_url']
+base_url = json_data['base_url']
 
 # Make an HTTP request to retrieve the HTML content of the website
 response = requests.get(url)
@@ -36,9 +36,12 @@ if response.status_code == 200:
 
         links = paragraph.find_all('a')
         for link in links:
+            href = link.get('href')
+            # Insert the base URL from the JSON file before the href value
+            full_href = base_url + href if href else ""
             paragraph_data['links'].append({
                 'text': link.get_text(),
-                'href': link.get('href')
+                'href': full_href
             })
 
         data['paragraphs'].append(paragraph_data)
