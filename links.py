@@ -24,29 +24,19 @@ if response.status_code == 200:
     data['title'] = soup.title.string
 
     # Extract the paragraphs from the website
-    paragraphs = soup.find_all('p')
-    data['paragraphs'] = []
+    data['paragraphs'] = [p.get_text() for p in soup.find_all('p')]
 
-    # Extract the <a> tags within the paragraphs and include the href links
-    for paragraph in paragraphs:
-        paragraph_data = {
-            'text': paragraph.get_text(),
-            'links': []
-        }
-
-        links = paragraph.find_all('a')
-        for link in links:
-            paragraph_data['links'].append({
-                'text': link.get_text(),
-                'href': link.get('href')
-            })
-
-        data['paragraphs'].append(paragraph_data)
+    # Extract the h1 and h4 headings from the website
+    data['headings'] = {
+        'h1': [h1.get_text() for h1 in soup.find_all('h1')],
+        'h4': [h4.get_text() for h4 in soup.find_all('h4')]
+    }
 
     # Save the data to a JSON file with formatting
-    with open('data.json', 'w') as outfile:
+    with open('links.json', 'w') as outfile:
         json.dump(data, outfile, indent=4)
 
-    print("Data saved to data.json successfully!")
+    print("Data saved to links.json successfully!")
 else:
     print("An error occurred while making the HTTP request. Status code:", response.status_code)
+ 
