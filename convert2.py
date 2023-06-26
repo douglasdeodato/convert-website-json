@@ -47,6 +47,7 @@ for paragraph_data in data['paragraphs']:
 
                 # Append the "text" and "url converted" fields to the extracted_links list
                 extracted_links.append({
+                    "link number checked": checked_count,
                     "text": text,
                     "url converted": href
                 })
