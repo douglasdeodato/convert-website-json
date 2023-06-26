@@ -34,6 +34,7 @@ for paragraph_data in data['paragraphs']:
                     linked_hrefs = [a.get('href') for a in soup.find_all('a')]
                     # Append the href values to the extracted_links list
                     extracted_links.extend(linked_hrefs)
+                
                 checked_count += 1
                 print("\nChecking link:", href)
                 print("Text:", text)  # Print the text value
@@ -45,17 +46,17 @@ for paragraph_data in data['paragraphs']:
                     stop_check = True
                     break
 
-                # Append the "text" and "url converted" fields to the extracted_links list
-                extracted_links.append({
-                    "link number checked": checked_count,
-                    "text": text,
-                    "url converted": href
-                })
-
     else:
         print("\nNo links found.")
         print("Text:", text)  # Print the text value
         sys.stdout.flush()  # Flush the output buffer to show the message immediately
+
+    # Append the "text", "url converted", and "link number checked" fields to the extracted_links list
+    extracted_links.append({
+        "text": text,
+        "url converted": href,
+        "link number checked": checked_count
+    })
 
     # Break the loop if the stop condition is met
     if stop_check:
