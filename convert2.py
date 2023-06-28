@@ -39,7 +39,7 @@ for paragraph_data in data['paragraphs']:
 
                     # Append the "text", "url converted", and "link number checked" fields to the extracted_links list
                     extracted_links.append({
-                        "text": text,
+                        "link text": text,
                         "url converted": href,
                         "link number checked": checked_count
                     })
@@ -48,8 +48,8 @@ for paragraph_data in data['paragraphs']:
                     gadgetStyleBody_elements = soup.find_all(class_="gadgetStyleBody gadgetContentEditableArea")
 
                     extracted_data = {
-                        "text h1": gadgetStyleBody_elements[0].get_text(strip=True).strip() if gadgetStyleBody_elements else None,
-                        "text h2": gadgetStyleBody_elements[1].get_text(strip=True).strip() if len(gadgetStyleBody_elements) > 1 else None,
+                       
+                        "title of the page": gadgetStyleBody_elements[1].get_text(strip=True).strip() if len(gadgetStyleBody_elements) > 1 else None,
                     }
                     extracted_links.append(extracted_data)
 
