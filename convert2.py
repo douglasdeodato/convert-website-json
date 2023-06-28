@@ -7,11 +7,11 @@ import sys
 with open('data.json', 'r') as file:
     data = json.load(file)
 
-# Load the ignored data from the config.json file
+# Load the ignored data and unwanted_urls from the config.json file
 with open('config.json', 'r') as config_file:
     config_data = json.load(config_file)
 
-# Extract unwanted_urls list from config_data
+ignored_data = config_data[:-1]
 unwanted_urls = config_data[-1]['unwanted_urls']
 
 # Create a list to store all the extracted links
@@ -29,7 +29,7 @@ for paragraph_data in data['paragraphs']:
             href = link['href']
             if href:
                 # Check if the link is in the ignored data
-                if any(data.get('href') == href for data in config_data):
+                if any(data.get('href') == href for data in ignored_data):
                     continue
 
                 # Make an HTTP request to the linked page
@@ -60,6 +60,11 @@ for paragraph_data in data['paragraphs']:
                 # Check if the text value matches the stop condition
                 if text == "Issue 01: Summer 1990":
                     stop_check = True
+                    extracted_links.append({
+                        "text": text,
+                        "url converted": href,
+                        "link number checked": checked_count
+                    })
                     break
 
         # Append the "text", "url converted", and "link number checked" fields to the extracted_links list
@@ -77,9 +82,8 @@ for paragraph_data in data['paragraphs']:
     if stop_check:
         break
 
-# Move the desired dictionary to the top of the extracted_links list
-null_index = extracted_links.index(None)
-extracted_links.insert(null_index + 1, extracted_links.pop())
+# Define the unwanted URLs
+unwanted_urls = config_data[-1]['unwanted_urls']
 
 # Remove the unwanted URLs from the extracted_links list
 filtered_links = [link for link in extracted_links if link not in unwanted_urls]
