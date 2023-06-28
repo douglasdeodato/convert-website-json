@@ -7,9 +7,12 @@ import sys
 with open('data.json', 'r') as file:
     data = json.load(file)
 
-# Load the ignored data from the ignored_data.json file
-with open('config.json', 'r') as ignored_file:
-    ignored_data = json.load(ignored_file)
+# Load the ignored data from the config.json file
+with open('config.json', 'r') as config_file:
+    config_data = json.load(config_file)
+
+# Extract unwanted_urls list from config_data
+unwanted_urls = config_data[-1]['unwanted_urls']
 
 # Create a list to store all the extracted links
 extracted_links = []
@@ -26,7 +29,7 @@ for paragraph_data in data['paragraphs']:
             href = link['href']
             if href:
                 # Check if the link is in the ignored data
-                if any(data.get('href') == href for data in ignored_data):
+                if any(data.get('href') == href for data in config_data):
                     continue
 
                 # Make an HTTP request to the linked page
@@ -35,7 +38,6 @@ for paragraph_data in data['paragraphs']:
                     soup = BeautifulSoup(response.content, 'html.parser')
 
                     # Extract text from the specified elements
-                    id_Jm2CA3A_element = soup.find(id="id_Jm2CA3A")
                     gadgetStyleBody_elements = soup.find_all(class_="gadgetStyleBody gadgetContentEditableArea")
 
                     extracted_data = {
@@ -79,9 +81,12 @@ for paragraph_data in data['paragraphs']:
 null_index = extracted_links.index(None)
 extracted_links.insert(null_index + 1, extracted_links.pop())
 
+# Remove the unwanted URLs from the extracted_links list
+filtered_links = [link for link in extracted_links if link not in unwanted_urls]
+
 # Create a dictionary to store the extracted links
 extracted_data = {
-    'links': extracted_links
+    'links': filtered_links
 }
 
 # Save the extracted data to a JSON file with formatting
