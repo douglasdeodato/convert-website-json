@@ -37,6 +37,13 @@ for paragraph_data in data['paragraphs']:
                 if response.status_code == 200:
                     soup = BeautifulSoup(response.content, 'html.parser')
 
+                    # Append the "text", "url converted", and "link number checked" fields to the extracted_links list
+                    extracted_links.append({
+                        "text": text,
+                        "url converted": href,
+                        "link number checked": checked_count
+                    })
+
                     # Extract text from the specified elements
                     gadgetStyleBody_elements = soup.find_all(class_="gadgetStyleBody gadgetContentEditableArea")
 
@@ -44,37 +51,28 @@ for paragraph_data in data['paragraphs']:
                         "text h1": gadgetStyleBody_elements[0].get_text(strip=True).strip() if gadgetStyleBody_elements else None,
                         "text h2": gadgetStyleBody_elements[1].get_text(strip=True).strip() if len(gadgetStyleBody_elements) > 1 else None,
                     }
+                    extracted_links.append(extracted_data)
 
                     # Find all <a> tags on the linked page and extract the href values
                     linked_hrefs = [a.get('href') for a in soup.find_all('a')]
-
-                    checked_count += 1
-                    print("\nChecking link:", href)
-                    print("Text:", text)  # Print the text value
-                    print(f"{checked_count} link checked\n")  # Print the count message
-                    sys.stdout.flush()  # Flush the output buffer to show the message immediately
-
-                    # Check if the text value matches the stop condition
-                    if text == "Issue 01: Summer 1990":
-                        stop_check = True
-                        extracted_links.append(extracted_data)
-                        extracted_links.append({
-                            "text": text,
-                            "url converted": href,
-                            "link number checked": checked_count
-                        })
-                        break
-
-                    extracted_links.append(extracted_data)
                     # Append the href values to the extracted_links list
                     extracted_links.extend(linked_hrefs)
 
-        # Append the "text", "url converted", and "link number checked" fields to the extracted_links list
-        extracted_links.append({
-            "text": text,
-            "url converted": href,
-            "link number checked": checked_count
-        })
+                checked_count += 1
+                print("\nChecking link:", href)
+                print("Text:", text)  # Print the text value
+                print(f"{checked_count} link checked\n")  # Print the count message
+                sys.stdout.flush()  # Flush the output buffer to show the message immediately
+
+                # Check if the text value matches the stop condition
+                if text == "Issue 01: Summer 1990":
+                    stop_check = True
+                    extracted_links.append({
+                        "text": text,
+                        "url converted": href,
+                        "link number checked": checked_count
+                    })
+                    break
 
     else:
         print("\nNo links found.")
