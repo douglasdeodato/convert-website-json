@@ -37,6 +37,17 @@ for paragraph_data in data['paragraphs']:
                     linked_hrefs = [a.get('href') for a in soup.find_all('a')]
                     # Append the href values to the extracted_links list
                     extracted_links.extend(linked_hrefs)
+
+                    # Extract text from the specified elements
+                    id_Jm2CA3A_element = soup.find(id="id_Jm2CA3A")
+                    gadgetStyleBody_elements = soup.find_all(class_="gadgetStyleBody gadgetContentEditableArea")
+
+                    extracted_data = {
+                        "text h1": gadgetStyleBody_elements[0].get_text(strip=True).strip() if gadgetStyleBody_elements else None,
+                        "text h2": gadgetStyleBody_elements[1].get_text(strip=True).strip() if len(gadgetStyleBody_elements) > 1 else None,
+                    }
+                    extracted_links.append(extracted_data)
+
                 checked_count += 1
                 print("\nChecking link:", href)
                 print("Text:", text)  # Print the text value
