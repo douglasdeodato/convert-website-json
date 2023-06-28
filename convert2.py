@@ -33,10 +33,6 @@ for paragraph_data in data['paragraphs']:
                 response = requests.get(href)
                 if response.status_code == 200:
                     soup = BeautifulSoup(response.content, 'html.parser')
-                    # Find all <a> tags on the linked page and extract the href values
-                    linked_hrefs = [a.get('href') for a in soup.find_all('a')]
-                    # Append the href values to the extracted_links list
-                    extracted_links.extend(linked_hrefs)
 
                     # Extract text from the specified elements
                     id_Jm2CA3A_element = soup.find(id="id_Jm2CA3A")
@@ -47,6 +43,11 @@ for paragraph_data in data['paragraphs']:
                         "text h2": gadgetStyleBody_elements[1].get_text(strip=True).strip() if len(gadgetStyleBody_elements) > 1 else None,
                     }
                     extracted_links.append(extracted_data)
+
+                    # Find all <a> tags on the linked page and extract the href values
+                    linked_hrefs = [a.get('href') for a in soup.find_all('a')]
+                    # Append the href values to the extracted_links list
+                    extracted_links.extend(linked_hrefs)
 
                 checked_count += 1
                 print("\nChecking link:", href)
@@ -73,6 +74,10 @@ for paragraph_data in data['paragraphs']:
 
     if stop_check:
         break
+
+# Move the desired dictionary to the top of the extracted_links list
+null_index = extracted_links.index(None)
+extracted_links.insert(null_index + 1, extracted_links.pop())
 
 # Create a dictionary to store the extracted links
 extracted_data = {
