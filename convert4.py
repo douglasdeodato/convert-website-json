@@ -2,7 +2,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
-# create a folder all_pages with all the links with the text inside sample:
+# create a folder < all_pages > with all the links with the text inside sample:
 # Issue_01__Summer_1990.html + editorial and all links from that page 
 
 # Function to create a page for each link
@@ -14,7 +14,7 @@ def create_page(url, link_text):
         html_content = response.text
 
         # Create a subfolder "all_pages" if it doesn't exist
-        subfolder = "all_pages"
+        subfolder = "INSIDE_OUT_JOURNAL_ARCHIVE/pages-links"
         os.makedirs(subfolder, exist_ok=True)
 
         # Generate the file name based on the link text
@@ -55,7 +55,7 @@ def create_page(url, link_text):
         print(f"Failed to retrieve content for '{link_text}'. Status code: {response.status_code}", flush=True)
 
 # Read the HTML file
-html_file = "INSIDE_OUT_JOURNAL_ARCHIVE/index.html"
+html_file = "INSIDE_OUT_JOURNAL_ARCHIVE/inside-out-archive-past-editions.html"
 
 with open(html_file, encoding="latin-1") as f:
     html_content = f.read()
