@@ -39,17 +39,16 @@ for paragraph_data in data['paragraphs']:
 
                     # Append the "text", "url converted", and "link number checked" fields to the extracted_links list
                     extracted_links.append({
-                        "link text": text,
-                        "url converted": href,
-                        "link number checked": checked_count
+                        "link_text": text,
+                        "url_converted": href,
+                        "link_number_checked": checked_count
                     })
 
                     # Extract text from the specified elements
                     gadgetStyleBody_elements = soup.find_all(class_="gadgetStyleBody gadgetContentEditableArea")
 
                     extracted_data = {
-                       
-                        "title of the page": gadgetStyleBody_elements[1].get_text(strip=True).strip() if len(gadgetStyleBody_elements) > 1 else None,
+                        "title_of_the_page": gadgetStyleBody_elements[1].get_text(strip=True).strip() if len(gadgetStyleBody_elements) > 1 else None,
                     }
                     extracted_links.append(extracted_data)
 
@@ -69,8 +68,8 @@ for paragraph_data in data['paragraphs']:
                     stop_check = True
                     extracted_links.append({
                         "text": text,
-                        "url converted": href,
-                        "link number checked": checked_count
+                        "url_converted": href,
+                        "link_number_checked": checked_count
                     })
                     break
 
@@ -95,7 +94,7 @@ extracted_data = {
 
 # Save the extracted data to a JSON file with formatting
 with open('data2.json', 'w') as outfile:
-    json.dump(extracted_data, outfile, indent=4)
+    json.dump(extracted_data, outfile, indent=4, separators=(",", ": "))
 
 print(f"\n{checked_count} link checked")
 print("Data saved to data2.json successfully!")
