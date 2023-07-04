@@ -1,6 +1,7 @@
 import os
 import requests
 from bs4 import BeautifulSoup
+import re
 
 # create a folder < all_pages > with all the links with the text inside sample:
 # Issue_01__Summer_1990.html + editorial and all links from that page 
@@ -20,7 +21,7 @@ def create_page(url, link_text):
         # Generate the file name based on the link text
         # Replace spaces with underscores and remove any invalid characters from the link text for the file name
         invalid_chars = r'\/:*?"<>|'
-        file_name = ''.join(c if c not in invalid_chars else '_' for c in link_text.strip().replace(' ', '_'))
+        file_name = re.sub('_+', '_', ''.join(c if c not in invalid_chars else '_' for c in link_text.strip().replace(' ', '_')))
 
         # Create the file path
         file_path = os.path.join(subfolder, f"{file_name}.html")
