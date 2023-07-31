@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-# create a folder < all_pages > with all the links with the text inside sample:
+# create a folder < pages-links > with all the links with the text inside sample:
 # Issue_01__Summer_1990.html + editorial and all links from that page 
 
 # Function to create a page for each link
