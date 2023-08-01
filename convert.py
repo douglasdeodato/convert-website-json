@@ -6,8 +6,11 @@ from bs4 import BeautifulSoup
 with open('config.json', 'r') as file:
     json_data = json.load(file)
 
-url = json_data['site_url']
-base_url = json_data['base_url']
+# Assuming the relevant dictionary is the second-to-last one
+relevant_config = json_data[-2]
+
+url = relevant_config['site_url']
+base_url = relevant_config['base_url']
 
 # Make an HTTP request to retrieve the HTML content of the website
 response = requests.get(url)
