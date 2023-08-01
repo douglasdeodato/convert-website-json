@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 import re
 import string
 
+#creates issue-all-links-printed folder
+
 # Function to remove non-printable characters from the content
 def remove_non_printable(content):
     printable_chars = set(string.printable)
