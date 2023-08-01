@@ -3,8 +3,11 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import string
+import time
+import sys
 
-#creates issue-all-links-printed folder
+# Set the console encoding to 'utf-8'
+sys.stdout.reconfigure(encoding='utf-8')
 
 # Function to remove non-printable characters from the content
 def remove_non_printable(content):
@@ -13,6 +16,9 @@ def remove_non_printable(content):
 
 # Function to create a page for each link
 def create_page(source_file, batch_folder):
+    # Define invalid characters for the file name
+    invalid_chars = r'\/:*?"<>|'
+
     # Read the HTML file
     with open(source_file, encoding="utf-8") as f:
         html_content = f.read()
@@ -53,7 +59,6 @@ def create_page(source_file, batch_folder):
 
                     # Generate the file name based on the link text
                     # Replace spaces with underscores and remove any invalid characters from the link text for the file name
-                    invalid_chars = r'\/:*?"<>|'
                     file_name = re.sub('_+', '_', ''.join(c if c not in invalid_chars else '_' for c in link_text.strip().replace(' ', '_')))
 
                     # Remove any newline characters from the file_name
@@ -92,12 +97,43 @@ if __name__ == "__main__":
     # Enter the "pages-links" directory
     directory = "INSIDE_OUT_JOURNAL_ARCHIVE/pages-links"
 
+    # Create the "issue-all-links-printed" directory if it doesn't exist
+    output_directory = "issue-all-links-printed"
+    os.makedirs(output_directory, exist_ok=True)
+
+    # Get the list of already processed folders
+    processed_folders = set(os.listdir(output_directory))
+
     # Process each HTML file in the "pages-links" directory
+    count_folders = 0  # Count of folders created
+    last_batch = False  # Flag to check if it's the last batch
+    batch_size = 10  # Number of folders to create in a batch
+
     for filename in os.listdir(directory):
         if filename.endswith(".html"):
             source_file = os.path.join(directory, filename)
             # Get the name of the file (excluding the extension) to create a folder with that name
             file_name = os.path.splitext(filename)[0]
             batch_folder = os.path.join("issue-all-links-printed", file_name)
+            
+            # Skip already processed folders
+            if file_name in processed_folders:
+                print(f"Skipping folder '{file_name}' as it's already processed.")
+                continue
+            
             os.makedirs(batch_folder, exist_ok=True)
             create_page(source_file, batch_folder)
+
+            count_folders += 1
+            if count_folders % batch_size == 0:
+                print(f"Waiting for 5 seconds before proceeding to the next batch...", flush=True)
+                time.sleep(5)  # 5-second delay before continuing to the next batch
+
+            if count_folders == len(os.listdir(directory)):
+                last_batch = True
+
+    if not last_batch:
+        remaining_folders = count_folders % batch_size
+        if remaining_folders > 0:
+            print(f"Waiting for 5 seconds before proceeding to the next batch...", flush=True)
+            time.sleep(5)  # 5-second delay before continuing to the next batch
