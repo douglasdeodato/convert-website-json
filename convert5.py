@@ -37,46 +37,15 @@ def create_page(source_file, batch_folder):
             # Send a GET request to the URL
             response = requests.get(url)
             if response.status_code == 200:
-                # Extract the content inside the div elements with id="id_FA6BOdP", id="id_nVkvGep", id="id_Fe3QN4i", and class="gadgetStyleBody gadgetContentEditableArea"
-                linked_html_content = BeautifulSoup(response.text, "html.parser").find_all("div", {"id": ["id_FA6BOdP", "id_nVkvGep", "id_Fe3QN4i"]})
-                editable_area_content = BeautifulSoup(response.text, "html.parser").find("div", {"class": "gadgetStyleBody gadgetContentEditableArea"})
-                class_content = BeautifulSoup(response.text, "html.parser").find("div", {"class": "WaGadgetLast WaGadgetContent gadgetStyleNone"})
-
-                if linked_html_content and editable_area_content:
-                    # Combine both contents
-                    combined_content = ""
-                    for content in linked_html_content:
-                        # Exclude the unwanted divs
-                        if 'id_Fe3QN4i' not in str(content) and 'gadgetStyleNone' not in str(content):
-                            combined_content += str(content)
-                    combined_content += str(editable_area_content)
-
-                    # Remove unusual line terminators from the combined content
-                    combined_content = combined_content.replace('\r\n', '\n').replace('\r', '\n')
+                # Extract the content inside the specific div with class="zoneContentInner zoneRoundedCorners"
+                zone_content = BeautifulSoup(response.text, "html.parser").find("div", {"class": "zoneContentInner s1_grid_12 s2_grid_12 s3_grid_12 zoneInner zoneRoundedCorners"})
+                
+                if zone_content:
+                    # Extract the content inside the specific div
+                    zone_content_inner = zone_content.prettify()
 
                     # Remove non-printable characters and control characters from the content
-                    combined_content = remove_non_printable(combined_content)
-
-                    # Generate the file name based on the link text
-                    # Replace spaces with underscores and remove any invalid characters from the link text for the file name
-                    file_name = re.sub('_+', '_', ''.join(c if c not in invalid_chars else '_' for c in link_text.strip().replace(' ', '_')))
-
-                    # Remove any newline characters from the file_name
-                    file_name = file_name.replace('\n', '')
-
-                    # Save the combined content to the file in binary mode with UTF-8 encoding
-                    file_path = os.path.join(batch_folder, f"{file_name}.html")
-                    with open(file_path, "wb") as f:
-                        f.write(combined_content.encode('utf-8'))
-
-                    print(f"Page created for '{link_text}' at '{file_path}'.", flush=True)
-                elif class_content:
-                    # Only class="WaGadgetLast WaGadgetContent gadgetStyleNone" content is found
-                    # Remove unusual line terminators from the class content
-                    class_content = str(class_content).replace('\r\n', '\n').replace('\r', '\n')
-
-                    # Remove non-printable characters and control characters from the content
-                    class_content = remove_non_printable(class_content)
+                    zone_content_inner = remove_non_printable(zone_content_inner)
 
                     # Generate the file name based on the link text
                     # Replace spaces with underscores and remove any invalid characters from the link text for the file name
@@ -86,10 +55,11 @@ def create_page(source_file, batch_folder):
                     # Save the content to the file in binary mode with UTF-8 encoding
                     file_path = os.path.join(batch_folder, f"{file_name}.html")
                     with open(file_path, "wb") as f:
-                        f.write(class_content.encode('utf-8'))
-                    print(f"Page created for '{link_text}' at '{file_path}' (using class content).", flush=True)
+                        f.write(zone_content_inner.encode('utf-8'))
+
+                    print(f"Page created for '{link_text}' (div class='zoneContentInner zoneRoundedCorners') at '{file_path}'.", flush=True)
                 else:
-                    print(f"No div with id='id_FA6BOdP', id='id_nVkvGep', id='id_Fe3QN4i', or class='gadgetStyleBody gadgetContentEditableArea' found in the linked content for '{link_text}'.", flush=True)
+                    print(f"No div with class='zoneContentInner zoneRoundedCorners' found in the linked content for '{link_text}'.", flush=True)
             else:
                 print(f"Failed to retrieve content for '{link_text}'. Status code: {response.status_code}", flush=True)
 
